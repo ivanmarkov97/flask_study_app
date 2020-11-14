@@ -1,0 +1,47 @@
+ \connect mysql://root@localhost:3306 //password root
+
+create database if not exists joom;
+
+use joom;
+
+create table if not exists user_group (group_id int not null auto_increment,
+name varchar(256) not null, 
+login varchar(256) not null,
+password varchar(256) not null,
+primary key (group_id));
+
+create user 'admin'@'localhost' indentified by 'admin';
+grant all privileges on joom.* to 'admin'@'localhost'; // check mysql.db
+
+create user 'tipical'@'localhost' identified by 'tipical';
+grant all privileges on joom.* to 'tipical'@'localhost';
+
+create table if not exists user(user_id int not null auto_increment, 
+name varchar(80) not null,
+login varcahr(256) not null,
+password varchar(256) not null,
+group int not null,
+primary key (user_id));
+
+alter table user add constraint uniq_login unique (login);
+
+create table items (item_id int not null auto_increment,
+name varchar(256) not null,
+description varchar(256),
+price int unsigned default 0,
+status tinyint,
+user int not null,
+primary key (item_id),
+foreign key (user) references user(user_id)
+on delete no action
+on update no action);
+
+insert into user_group values (NULL, 'admin', 'admin', 'admin');
+insert into user_group values (NULL, 'tipical', 'tipical', 'tipical');
+
+insert into items values (NULL, 'item1', 'something item description, very hight quality', 100, 1, 1);
+insert into items values (NULL, 'item2', 'something another item description, very hight quality', 300, 1, 1);
+insert into items values (NULL, 'item3', 'something another item description, very hight quality', 500, 1, 1);
+insert into items values (NULL, 'item1.1', 'something king of item description, very hight quality', 200, 1, 2);
+insert into items values (NULL, 'item1.2', 'something king of item description, very hight quality', 250, 1, 2);
+insert into items values (NULL, 'item1.3', 'something king of item description, not very hight quality', 50, 1, 2);
